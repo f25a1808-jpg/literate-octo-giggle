@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculus in Agro-Product Tech: Broiler Growth Dynamics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <header class="border-b border-slate-200 pb-6 mb-8 text-center md:text-left">
+            <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">SFP: Agro-Product Technology Insights</span>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mt-3">Visualizing Derivatives in Malaysian Poultry Production</h1>
+            <p class="text-slate-600 mt-2 text-lg">Optimizing Feed Conversion Ratios (FCR) and harvest timelines using real-world biological modeling.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
+                        <span>🌱</span> The Bioscience Problem
+                    </h2>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        In Malaysian agro-product chains, minimizing the <strong>Feed Conversion Ratio (FCR)</strong> is vital for profitability. Broiler chickens do not grow linearly; they follow a sigmoidal (S-shaped) logistic curve. 
+                    </p>
+                    <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+                        By identifying the exact point where the growth rate — the <strong>derivative f'(t)</strong> — peaks and begins to decelerate, farm managers and meat processors can determine the optimal harvest window before feed consumption outpaces muscle deposition.
+                    </p>
+                    <div class="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-500">
+                        <strong>Data Source Reference:</strong> Baseline parameters adapted from the <em>Department of Veterinary Services (DVS) Malaysia Broiler Industry Performance Guidelines (Cobb 500 Breed Standard)</em>.
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 text-slate-100 p-6 rounded-2xl shadow-md space-y-4">
+                    <h2 class="text-xl font-bold text-emerald-400 flex items-center gap-2">
+                        <span>📊</span> The Calculus Toolkit
+                    </h2>
+                    
+                    <div>
+                        <span class="block text-xs uppercase tracking-wider text-slate-400 font-semibold">Growth Function f(t)</span>
+                        <div class="bg-slate-800 p-3 rounded-lg font-mono text-xs overflow-x-auto text-emerald-300 mt-1">
+                            f(t) = L / (1 + a * e^(-b * t))
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Predicts total biomass (grams) at day <strong>t</strong>.</p>
+                    </div>
+
+                    <div>
+                        <span class="block text-xs uppercase tracking-wider text-slate-400 font-semibold">Derivative f'(t) (Rate of Change)</span>
+                        <div class="bg-slate-800 p-3 rounded-lg font-mono text-xs overflow-x-auto text-amber-300 mt-1">
+                            f'(t) = (L * a * b * e^(-b * t)) / (1 + a * e^(-b * t))^2
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Calculates exact growth speed (grams/day) at day <strong>t</strong>.</p>
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-800 text-xs space-y-1 text-slate-400">
+                        <div><strong class="text-slate-200">L (Asymptotic Max Weight):</strong> 2900g</div>
+                        <div><strong class="text-slate-200">a (Initial Scaling Constant):</strong> 63.44</div>
+                        <div><strong class="text-slate-200">b (Growth Coefficient):</strong> 0.15</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Interactive Growth Dynamics</h2>
+                            <p class="text-xs text-slate-500">Click anywhere near the lines to inspect precise localized derivatives.</p>
+                        </div>
+                        <div class="flex gap-4 text-xs">
+                            <span class="flex items-center gap-1"><span class="w-3 h-3 bg-emerald-500 rounded-full inline-block"></span> Weight f(t)</span>
+                            <span class="flex items-center gap-1"><span class="w-3 h-3 bg-amber-500 rounded-full inline-block"></span> Growth Rate f'(t)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="relative w-full h-[350px] md:h-[400px]">
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                </div>
+
+                <div id="interactivePanel" class="bg-gradient-to-br from-emerald-900 to-slate-900 text-white p-6 rounded-2xl shadow-lg transition-all duration-300 transform">
+                    <div id="promptMessage" class="text-center py-6 block">
+                        <p class="text-emerald-300 font-medium text-lg animate-pulse">💡 Click a data point on the graph above to compute the derivative!</p>
+                        <p class="text-xs text-slate-400 mt-1">See how calculus translates directly into real-time biological farm decisions.</p>
+                    </div>
+
+                    <div id="dataReport" class="hidden space-y-4">
+                        <div class="flex flex-wrap justify-between items-center border-b border-emerald-800 pb-3">
+                            <h3 class="text-2xl font-bold text-emerald-400">Analysis for Lifecycle Day <span id="reportDay" class="text-white">0</span></h3>
+                            <span class="text-xs px-2.5 py-1 bg-emerald-800 text-emerald-200 rounded-full font-mono">Calculus Evaluation</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700">
+                                <span class="block text-xs uppercase tracking-wider text-slate-400">Total Weight f(t)</span>
+                                <span class="text-3xl font-black text-white" id="reportWeight">0</span> <span class="text-sm text-slate-300">grams</span>
+                            </div>
+                            <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700">
+                                <span class="block text-xs uppercase tracking-wider text-amber-400">Instantaneous Growth Rate f'(t)</span>
+                                <span class="text-3xl font-black text-amber-400" id="reportDerivative">0</span> <span class="text-sm text-amber-300">g/day</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/5 p-4 rounded-xl border border-white/10 mt-2">
+                            <span class="block text-xs font-bold text-emerald-400 uppercase tracking-wide mb-1">Agro-Technical Interpretation:</span>
+                            <p id="reportExplanation" class="text-sm text-slate-200 leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const L = 2900;   
+        const a = 63.44;  
+        const b = 0.15;   
+
+        function f(t) {
+            return L / (1 + a * Math.exp(-b * t));
+        }
+
+        function fPrime(t) {
+            const expTerm = Math.exp(-b * t);
+            const denominator = 1 + a * expTerm;
+            return (L * a * b * expTerm) / Math.pow(denominator, 2);
+        }
+
+        const labels = [];
+        const weightData = [];
+        const rateData = [];
+
+        for (let day = 0; day <= 42; day++) {
+            labels.push(day);
+            // Dipastikan kekal jenis 'Number' (bukan string) supaya paksi paksi grafik Chart.js tak crash
+            weightData.push(Number(f(day).toFixed(1)));
+            rateData.push(Number(fPrime(day).toFixed(1)));
+        }
+
+        // Generate Chart selepas DOM dipastikan sedia
+        window.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            const growthChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "Broiler Weight f(t) (g)",
+                            data: weightData,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                            borderWidth: 3,
+                            fill: true,
+                            yAxisID: 'yWeight',
+                            tension: 0.2
+                        },
+                        {
+                            label: "Growth Rate f'(t) (g/day)",
+                            data: rateData,
+                            borderColor: '#f59e0b',
+                            borderWidth: 2.5,
+                            borderDash: [5, 5],
+                            fill: false,
+                            yAxisID: 'yRate',
+                            tension: 0.2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 1500
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Rearing Timeline (Days)'
+                            }
+                        },
+                        yWeight: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Weight (g)'
+                            },
+                            min: 0,
+                            max: 3200
+                        },
+                        yRate: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Rate (g/day)'
+                            },
+                            min: 0,
+                            max: 120,
+                            grid: { display: false }
+                        }
+                    },
+                    onClick: (e) => {
+                        const activePoints = growthChart.getElementsAtEventForMode(e, 'nearest', { intersect: false }, true);
+                        if (activePoints.length > 0) {
+                            const clickedDay = activePoints[0].index;
+                            updateDerivativeReport(clickedDay);
+                        }
+                    }
+                }
+            });
+        });
+
+        function updateDerivativeReport(day) {
+            const currentWeight = f(day);
+            const currentRate = fPrime(day);
+            const peakDay = Math.round(Math.log(a) / b); 
+
+            let laymanExplanation = "";
+
+            if (day < 14) {
+                laymanExplanation = `Fasa awal perumahan (brooding). Nilai terbitan/derivative adalah kecil (${currentRate.toFixed(1)} g/hari) kerana anak ayam fokus membina organ dan rangka tulang dahulu, bukan daging. Kadar peningkatan berat sikit demi sikit tapi memecut setiap hari.`;
+            } else if (day >= 14 && day <= 21) {
+                laymanExplanation = `Fasa transisi. Nilai terbitan (f') mula mendaki laju. Rangka ayam dah siap, sekarang pembentukan tisu otot bermula secara agresif. Kecekapan makanan sangat tinggi waktu ini.`;
+            } else if (day > 21 && day <= 30) {
+                laymanExplanation = `Zon puncak metabolisme! Nilai terbitan (f') mencapai tahap maksimum sekitar Hari ke-${peakDay} iaitu hampir 108g/hari (Titik Lengkok Balas / Inflection Point). Waktu ini ayam tukar dedak jadi daging dada dengan paling cekap!`;
+            } else if (day > 30 && day <= 38) {
+                laymanExplanation = `Fasa pulangan berkurangan. Perhatikan nilai terbitan f'(t) mula menurun. Walaupun berat keseluruhan ayam (f) makin naik, tapi kelajuan tumbuhannya dah makin perlahan. Ayam makan banyak sekadar untuk kekalkan lemak badan.`;
+            } else {
+                laymanExplanation = `Kematangan Optimum Komersial. Nilai terbitan (kadar pertumbuhan) sudah jatuh menjunam. Jika terus bela ayam lepas fasa ini, nisbah penukaran dedak (FCR) akan rugi sebab dedak habis banyak tapi daging tak bertambah mana. Wajib tuai/proses segera!`;
+            }
+
+            document.getElementById("promptMessage").classList.add("hidden");
+            document.getElementById("dataReport").classList.remove("hidden");
+            
+            document.getElementById("reportDay").innerText = day;
+            document.getElementById("reportWeight").innerText = Math.round(currentWeight).toLocaleString();
+            document.getElementById("reportDerivative").innerText = currentRate.toFixed(2);
+            document.getElementById("reportExplanation").innerText = laymanExplanation;
+        }
+    </script>
+</body>
+</html>
